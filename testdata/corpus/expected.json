@@ -1,0 +1,190 @@
+{
+  "attacker-key.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS003"
+    ],
+    "note": "signed with a key the message carries, not the identity provider's"
+  },
+  "comment-in-nameid.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002"
+    ],
+    "must_report": [
+      "SS005"
+    ],
+    "note": "CVE-2017-11427: a comment truncates the NameID for some parsers"
+  },
+  "dtd.xml": {
+    "cert": "idp.pem",
+    "note": "a DTD with an external entity is refused, not parsed",
+    "refused": true
+  },
+  "good-assertion-signed.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "the assertion is signed"
+  },
+  "good-both-signed.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "the assertion and the response are signed"
+  },
+  "good-ecdsa.xml": {
+    "cert": "idp-ec.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "ECDSA P-256"
+  },
+  "good-inclusive-c14n.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "inclusive canonicalization over the whole response"
+  },
+  "good-other-prefixes.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "unusual prefixes"
+  },
+  "good-prefix-list.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "exclusive canonicalization with an InclusiveNamespaces PrefixList"
+  },
+  "good-response-signed.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [
+      "SS001",
+      "SS002",
+      "SS003",
+      "SS004",
+      "SS005",
+      "SS012"
+    ],
+    "must_report": [],
+    "note": "the response is signed"
+  },
+  "tampered-nameid.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS002"
+    ],
+    "note": "the NameID is changed after signing"
+  },
+  "unsigned.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS002"
+    ],
+    "note": "nothing is signed"
+  },
+  "xsw-duplicate-id.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS004"
+    ],
+    "note": "an unsigned assertion reuses the signed one's ID"
+  },
+  "xsw-evil-assertion-first.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS001",
+      "SS010"
+    ],
+    "note": "an unsigned assertion is placed before the signed one"
+  },
+  "xsw-evil-wraps-signed.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS001"
+    ],
+    "note": "the signed assertion is moved inside an unsigned one"
+  },
+  "xsw-response-wrapped.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS001"
+    ],
+    "note": "XSW1: an unsigned Response wraps the signed one"
+  },
+  "xsw-signature-moved.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS002"
+    ],
+    "note": "the signature is moved to an unsigned assertion, and what it signed is gone"
+  },
+  "xsw-signed-in-advice.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS001"
+    ],
+    "note": "the signed assertion is hidden in an unsigned one's Advice"
+  },
+  "xsw-signed-in-object.xml": {
+    "cert": "idp.pem",
+    "must_not_report": [],
+    "must_report": [
+      "SS001"
+    ],
+    "note": "XSW7: the signature sits in the unsigned assertion, and the element it signs is in its ds:Object"
+  }
+}

