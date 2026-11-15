@@ -131,9 +131,22 @@ The private keys are never written down.
 
 **Against signxml and xmlsec1.** `scripts/check_corpus.py` asks two other verifiers about every
 signature samlsift reports: signxml (Python, built on lxml) which element each one signs, and
-xmlsec1 (C, libxml2) whether it verifies with the identity provider's certificate. Locally, with signxml 5.2.0,
-the two agree on every message: 18 compared, the 19th refused for its DTD by both. xmlsec1
-runs in CI; this paragraph will say what it found.
+xmlsec1 (C, libxml2) whether it verifies with the identity provider's certificate. In CI, with signxml 5.2.0 and
+xmlsec1 1.3.9, xmlsec1 agrees on all 18 signatures and signxml on 17.
+
+Getting there found a bug in samlsift. On the first run xmlsec1 rejected everything, which was my
+script's fault: given the certificate as a bare key, xmlsec1 still checks the certificate in the
+message's KeyInfo, and finds it untrusted. Told to trust the identity provider's certificate
+instead, it disagreed about one message, the XSW7 attack, in which the signed assertion is hidden
+inside its own signature's `ds:Object`. The enveloped-signature transform removes the signature
+and everything inside it (XML Signature section 6.6.4), the referenced assertion included, so
+nothing is left to digest and the signature is invalid. samlsift had dropped the signature only
+where it met it below the referenced element, which is what a lax verifier does, and verified it.
+It now follows the specification, and reports the shape on its own (SS016), since a lax verifier
+would accept the message and a reader would then take the unsigned assertion outside. signxml is
+such a verifier for this message: it accepts it and returns the hidden assertion as what was
+signed, which is safe only for code that reads what it returns. `scripts/check_corpus.py` accepts
+that one difference and no other.
 
 **Canonicalization against libxml2.** `scripts/compare_c14n.py` generates documents built to be
 awkward: prefixes declared, redeclared and left unused, a default namespace set and undone,
