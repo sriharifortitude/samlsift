@@ -68,20 +68,24 @@ def samlsift_signed(report: dict) -> set[str]:
     return out
 
 
-def xmlsec_view(message: pathlib.Path, cert: pathlib.Path, report: dict) -> list[tuple[str, bool]]:
-    """For each signature samlsift found, whether xmlsec1 verifies it with the certificate."""
+def xmlsec_view(message: pathlib.Path, cert: pathlib.Path, report: dict) -> list[tuple[str, bool, str]]:
+    """For each signature samlsift found, whether xmlsec1 verifies it with the certificate, and
+    what xmlsec1 said. The messages carry their certificate in KeyInfo, so xmlsec1 is told to
+    trust the identity provider's certificate rather than given it as a bare key: then a
+    certificate an attacker put in the message is not trusted, which is the question asked."""
     out = []
     for sig in report["signatures"]:
         steps = sig["path"].split("/")
         xpath = "".join(f"/*[local-name()='{s.split('[')[0]}']" + (f"[{s.split('[')[1]}" if "[" in s else "") for s in steps)
         run = subprocess.run(
-            ["xmlsec1", "--verify", "--pubkey-cert-pem", str(cert),
+            ["xmlsec1", "--verify", "--trusted-pem", str(cert),
              "--id-attr:ID", "urn:oasis:names:tc:SAML:2.0:protocol:Response",
              "--id-attr:ID", "urn:oasis:names:tc:SAML:2.0:assertion:Assertion",
              "--node-xpath", xpath, str(message)],
             capture_output=True, text=True, check=False,
         )
-        out.append((sig["path"], run.returncode == 0))
+        said = " | ".join(line.strip() for line in run.stderr.strip().splitlines()[-3:])
+        out.append((sig["path"], run.returncode == 0, said))
     return out
 
 
@@ -125,13 +129,13 @@ def main() -> int:
                 totals["signxml disagrees"] += 1
                 print(f"{name}: signed elements: samlsift {sorted(mine)}, signxml {sorted(theirs)}")
         if have_xmlsec:
-            for path, ok in xmlsec_view(message, cert, report):
+            for path, ok, said in xmlsec_view(message, cert, report):
                 totals["signatures compared with xmlsec1"] += 1
                 sig = next(s for s in report["signatures"] if s["path"] == path)
                 mine_ok = sig["verified"] and sig.get("key") == "the configured certificate"
                 if ok != mine_ok:
                     totals["xmlsec1 disagrees"] += 1
-                    print(f"{name}: {path}: samlsift {'verifies' if mine_ok else 'rejects'}, xmlsec1 {'verifies' if ok else 'rejects'}")
+                    print(f"{name}: {path}: samlsift {'verifies' if mine_ok else 'rejects'}, xmlsec1 {'verifies' if ok else 'rejects'}: {said[:300]}")
     for k, v in sorted(totals.items()):
         print(f"{k}: {v}")
     return 1 if totals["wrong"] or totals["signxml disagrees"] or totals["xmlsec1 disagrees"] else 0
