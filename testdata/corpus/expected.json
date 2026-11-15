@@ -181,10 +181,13 @@
   },
   "xsw-signed-in-object.xml": {
     "cert": "idp.pem",
-    "must_not_report": [],
-    "must_report": [
+    "must_not_report": [
       "SS001"
     ],
-    "note": "XSW7: the signature sits in the unsigned assertion, and the element it signs is in its ds:Object"
+    "must_report": [
+      "SS002",
+      "SS016"
+    ],
+    "note": "XSW7: the signature sits in the unsigned assertion, and the element it signs is in its ds:Object, so a conforming verifier finds nothing left to digest"
   }
 }

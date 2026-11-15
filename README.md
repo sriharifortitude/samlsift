@@ -102,6 +102,7 @@ usage error or a message that could not be read.
 | SS012 | medium | a signature that cannot be checked: an unsupported transform or algorithm, a missing ID |
 | SS013 | info | a status other than Success |
 | SS015 | medium | an Issuer other than the `--issuer` given |
+| SS016 | high | a signed element inside its own signature (XSW7): invalid to a conforming verifier, accepted by a lax one |
 | SS020 | high | not a SAML Response or Assertion |
 
 A document with a DTD is refused before anything else happens: SAML messages have no use for one,

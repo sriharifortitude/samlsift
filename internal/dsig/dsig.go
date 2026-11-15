@@ -85,6 +85,9 @@ type Reference struct {
 	WeakHash   bool
 	Transforms []string
 	Problem    string
+	// InsideOwnSignature is true when the referenced element sits inside the signature, as in
+	// the XSW7 attack. The enveloped transform then leaves nothing to digest.
+	InsideOwnSignature bool
 }
 
 // Result is what verifying one signature found.
@@ -320,9 +323,17 @@ func reference(doc *xmltree.Document, sig, ref *xmltree.Node, ids IDIndex) Refer
 		exclude = sig
 	}
 	var data []byte
-	if res.Target == nil {
+	inside := res.Target != nil && isWithin(res.Target, sig)
+	res.InsideOwnSignature = inside
+	switch {
+	case inside && enveloped:
+		// The enveloped transform removes the signature and everything in it from the node-set
+		// (XML Signature section 6.6.4), the referenced element included: nothing is left. A
+		// verifier that only drops the signature from the referenced subtree would accept this.
+		data = nil
+	case res.Target == nil:
 		data = c14n.Document(doc, exclude, opt)
-	} else {
+	default:
 		data = c14n.Subtree(res.Target, exclude, opt)
 	}
 
@@ -345,8 +356,21 @@ func reference(doc *xmltree.Document, sig, ref *xmltree.Node, ids IDIndex) Refer
 	h := newHash(digest.hash)
 	h.Write(data)
 	res.DigestOK = bytes.Equal(h.Sum(nil), want)
-	if !res.DigestOK {
+	switch {
+	case !res.DigestOK && inside && enveloped:
+		res.Problem = "the referenced element is inside the signature, so the enveloped transform leaves nothing to digest"
+	case !res.DigestOK:
 		res.Problem = "the digest does not match: the signed content was changed"
 	}
 	return res
+}
+
+// isWithin reports whether n is the given ancestor or below it.
+func isWithin(n, ancestor *xmltree.Node) bool {
+	for e := n; e != nil; e = e.Parent {
+		if e == ancestor {
+			return true
+		}
+	}
+	return false
 }

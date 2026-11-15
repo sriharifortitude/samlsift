@@ -184,8 +184,9 @@ def main() -> None:
     obj = etree.SubElement(sig, f"{{{DS}}}Object")
     obj.append(resp_assertion)
     evil.insert(1, sig)
-    write("xsw-signed-in-object.xml", r, cases, ["SS001"],
-          "XSW7: the signature sits in the unsigned assertion, and the element it signs is in its ds:Object")
+    write("xsw-signed-in-object.xml", r, cases, ["SS002", "SS016"],
+          "XSW7: the signature sits in the unsigned assertion, and the element it signs is in its ds:Object, "
+          "so a conforming verifier finds nothing left to digest", absent=["SS001"])
     # Two elements with the signed ID.
     r = copy.deepcopy(signed_a)
     r.insert(2, evil_assertion(signed, assertion_id="_a1"))

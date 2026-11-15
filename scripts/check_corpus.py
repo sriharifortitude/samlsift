@@ -26,6 +26,14 @@ FLAGS = [
 ]
 
 
+# Where signxml and samlsift are known to differ: message -> (samlsift's signed IDs, signxml's).
+# In the XSW7 shape the signed assertion sits inside its own signature. The enveloped transform
+# removes the signature and everything in it (XML Signature section 6.6.4), so nothing is left to
+# digest and the signature is invalid; xmlsec1 rejects it too. signxml accepts it, and returns the
+# hidden assertion as what was signed, which is safe only for code that reads what it returns.
+SIGNXML_KNOWN = {"xsw-signed-in-object.xml": (set(), {"_a1"})}
+
+
 def samlsift(binary: str, message: pathlib.Path, cert: pathlib.Path) -> tuple[int, dict | None, str]:
     run = subprocess.run([binary, "--json", "--cert", str(cert), *FLAGS, str(message)], capture_output=True, text=True, check=False)
     if run.returncode == 2:
@@ -125,7 +133,9 @@ def main() -> int:
         theirs = signxml_view(message, cert)
         if theirs is not None:
             totals["compared with signxml"] += 1
-            if mine != theirs:
+            if name in SIGNXML_KNOWN and (mine, theirs) == SIGNXML_KNOWN[name]:
+                totals["documented differences with signxml"] += 1
+            elif mine != theirs:
                 totals["signxml disagrees"] += 1
                 print(f"{name}: signed elements: samlsift {sorted(mine)}, signxml {sorted(theirs)}")
         if have_xmlsec:

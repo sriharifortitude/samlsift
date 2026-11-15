@@ -194,6 +194,10 @@ func (a *Analysis) judgeSignatures(cfg Config) {
 			if ref.Problem != "" {
 				a.add("SS012", "medium", "the signature at %s, reference %q: %s", where, ref.URI, ref.Problem)
 			}
+			if ref.InsideOwnSignature {
+				a.add("SS016", "high", "the signature at %s signs %s, which sits inside the signature itself: the XSW7 shape. A conforming verifier rejects it; one that drops only the signature from the signed element accepts it, and a reader then takes whatever assertion is outside",
+					where, describe(ref.Target))
+			}
 			if ref.WeakHash {
 				a.add("SS006", "medium", "the signature at %s digests with %s", where, ref.Digest)
 			}
